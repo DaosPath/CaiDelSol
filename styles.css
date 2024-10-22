@@ -13,6 +13,9 @@
     --hover-shadow: rgba(0, 0, 0, 0.2); /* Color de Sombra al Hover */
     --font-family: 'Roboto', sans-serif; /* Familia Tipográfica */
     --transition-speed: 0.3s; /* Velocidad de Transición */
+    --modal-bg: rgba(0, 0, 0, 0.5); /* Fondo de Modal */
+    --gradient-bg: linear-gradient(135deg, #FFE0B2, #FFCC80); /* Fondo con Gradiente */
+    --button-hover: #E64A19; /* Naranja Intenso para Hover */
 }
 
 /* Reset de Estilos Básicos */
@@ -33,7 +36,7 @@ body {
 
 /* Estilos del Header */
 header {
-    background-color: var(--card-background);
+    background: var(--gradient-bg);
     padding: 20px 40px;
     display: flex;
     justify-content: space-between;
@@ -42,12 +45,14 @@ header {
     position: sticky;
     top: 0;
     z-index: 1000;
+    transition: background var(--transition-speed);
 }
 
 header h1 {
     font-size: 2em;
-    color: var(--primary-color);
+    color: #fff;
     font-weight: 700;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
 }
 
 .header-controls {
@@ -58,22 +63,23 @@ header h1 {
 
 #currency-selector {
     padding: 8px 12px;
-    border: 1px solid var(--border-color);
+    border: none;
     border-radius: 6px;
-    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.8);
     color: var(--text-color);
     font-size: 1em;
-    transition: border-color var(--transition-speed);
+    transition: background-color var(--transition-speed), transform var(--transition-speed);
 }
 
 #currency-selector:focus {
-    border-color: var(--primary-color);
+    background-color: #fff;
+    transform: scale(1.05);
     outline: none;
     box-shadow: 0 0 5px var(--primary-color);
 }
 
 #reset-btn {
-    background-color: #BF360C; /* Rojo Anaranjado */
+    background-color: var(--primary-color);
     color: #fff;
     border: none;
     padding: 10px 20px;
@@ -82,10 +88,13 @@ header h1 {
     font-size: 1em;
     transition: background-color var(--transition-speed), transform var(--transition-speed);
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
 #reset-btn:hover {
-    background-color: #FF5722; /* Rojo Vivo */
+    background-color: var(--button-hover);
     transform: translateY(-2px);
 }
 
@@ -96,6 +105,7 @@ main {
     display: flex;
     flex-direction: column;
     gap: 40px;
+    background: var(--gradient-bg);
 }
 
 /* Estilos de Formularios */
@@ -113,12 +123,13 @@ main {
     box-shadow: 0 4px 20px var(--shadow-color);
     width: 100%;
     max-width: 400px;
-    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed), background-color var(--transition-speed);
 }
 
 .form:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 30px var(--hover-shadow);
+    background-color: #fff8e1;
 }
 
 .form h2 {
@@ -127,10 +138,23 @@ main {
     text-align: center;
     font-weight: 600;
     font-size: 1.5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
 .form-group {
     margin-bottom: 15px;
+    position: relative;
+}
+
+.form-group input[type="color"] {
+    width: 100%;
+    height: 40px;
+    padding: 0;
+    border: none;
+    cursor: pointer;
 }
 
 .form input, 
@@ -144,7 +168,7 @@ main {
     font-size: 1em;
     background-color: #fafafa;
     color: var(--text-color);
-    transition: border-color var(--transition-speed), background-color var(--transition-speed);
+    transition: border-color var(--transition-speed), background-color var(--transition-speed), transform var(--transition-speed);
 }
 
 .form input:focus, 
@@ -162,10 +186,14 @@ main {
     cursor: pointer;
     transition: background-color var(--transition-speed), transform var(--transition-speed);
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
 }
 
 .form button:hover {
-    background-color: #E64A19; /* Naranja Intenso */
+    background-color: var(--button-hover);
     transform: translateY(-2px);
 }
 
@@ -175,6 +203,13 @@ main {
     padding: 30px 25px;
     border-radius: 12px;
     box-shadow: 0 4px 20px var(--shadow-color);
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed), background-color var(--transition-speed);
+}
+
+.summary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px var(--hover-shadow);
+    background-color: #fff8e1;
 }
 
 .summary h2 {
@@ -183,6 +218,10 @@ main {
     color: var(--primary-color);
     font-weight: 600;
     font-size: 1.5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
 .summary-cards {
@@ -199,12 +238,13 @@ main {
     flex: 1 1 150px;
     text-align: center;
     box-shadow: 0 2px 8px var(--shadow-color);
-    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed), background-color var(--transition-speed);
 }
 
 .card:hover {
     transform: translateY(-3px);
     box-shadow: 0 6px 20px var(--hover-shadow);
+    background-color: #fff3e0;
 }
 
 .card h3 {
@@ -231,6 +271,13 @@ main {
     display: flex;
     flex-direction: column;
     gap: 30px;
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed), background-color var(--transition-speed);
+}
+
+.chart-container:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px var(--hover-shadow);
+    background-color: #fff8e1;
 }
 
 .charts {
@@ -247,9 +294,9 @@ main {
     position: relative;
     border-radius: 12px;
     overflow: hidden;
-    background: linear-gradient(135deg, #ffffff, #f0f0f0);
+    background: var(--card-background);
     box-shadow: 0 2px 8px var(--shadow-color);
-    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed), background-color var(--transition-speed);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -258,6 +305,7 @@ main {
 .chart:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 30px var(--hover-shadow);
+    background-color: #fff3e0;
 }
 
 .thermometer-chart {
@@ -266,9 +314,9 @@ main {
     height: 150px;
     border-radius: 12px;
     overflow: hidden;
-    background: linear-gradient(135deg, #ffffff, #f0f0f0);
+    background: var(--card-background);
     box-shadow: 0 2px 8px var(--shadow-color);
-    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed), background-color var(--transition-speed);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -277,6 +325,7 @@ main {
 .thermometer-chart:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 30px var(--hover-shadow);
+    background-color: #fff3e0;
 }
 
 .full-width {
@@ -324,12 +373,13 @@ main {
     box-shadow: 0 4px 20px var(--shadow-color);
     width: 100%;
     max-width: 400px;
-    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed), background-color var(--transition-speed);
 }
 
 .list:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 30px var(--hover-shadow);
+    background-color: #fff8e1;
 }
 
 .list h2 {
@@ -338,6 +388,10 @@ main {
     text-align: center;
     font-weight: 600;
     font-size: 1.5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
 .list ul {
@@ -400,6 +454,9 @@ main {
     margin-left: 5px;
     font-size: 0.9em;
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
 .edit-btn {
@@ -420,6 +477,12 @@ footer {
     padding: 15px 20px;
     box-shadow: 0 -2px 6px var(--shadow-color);
     font-size: 0.9em;
+    transition: background-color var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+footer:hover {
+    background-color: #fff8e1;
+    box-shadow: 0 -2px 10px var(--hover-shadow);
 }
 
 /* Estilos de Modales */
@@ -432,12 +495,12 @@ footer {
     width: 100%; 
     height: 100%; 
     overflow: auto; 
-    background-color: rgba(0,0,0,0.5); /* Aumentar opacidad para mayor enfoque */
+    background-color: var(--modal-bg); /* Fondo de Modal */
 }
 
 .modal-content {
     background-color: var(--card-background);
-    margin: 10% auto; 
+    margin: 5% auto; 
     padding: 30px 25px;
     border: 1px solid var(--border-color);
     width: 90%; 
@@ -446,6 +509,12 @@ footer {
     position: relative;
     box-shadow: 0 4px 20px var(--shadow-color);
     animation: fadeIn 0.5s ease-out;
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed), background-color var(--transition-speed);
+}
+
+.modal-content:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px var(--hover-shadow);
 }
 
 .close {
@@ -470,6 +539,10 @@ footer {
     text-align: center;
     font-weight: 600;
     font-size: 1.6em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
 .modal-content input,
@@ -483,7 +556,7 @@ footer {
     font-size: 1em;
     background-color: #fafafa;
     color: var(--text-color);
-    transition: border-color var(--transition-speed), background-color var(--transition-speed);
+    transition: border-color var(--transition-speed), background-color var(--transition-speed), transform var(--transition-speed);
 }
 
 .modal-content input:focus,
@@ -501,10 +574,14 @@ footer {
     cursor: pointer;
     transition: background-color var(--transition-speed), transform var(--transition-speed);
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
 }
 
 .modal-content button:hover {
-    background-color: #E64A19; /* Naranja Intenso */
+    background-color: var(--button-hover);
     transform: translateY(-2px);
 }
 
@@ -545,20 +622,53 @@ footer {
 }
 
 @media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        gap: 10px;
+        padding: 15px 20px;
+    }
+
+    header h1 {
+        font-size: 1.5em;
+    }
+
+    .header-controls {
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+    }
+
+    #currency-selector {
+        width: 100%;
+    }
+
+    #reset-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    main {
+        padding: 20px;
+    }
+
+    .forms {
+        grid-template-columns: 1fr;
+    }
+
+    .form {
+        max-width: 100%;
+    }
+
     .charts {
         flex-direction: column;
         align-items: center;
     }
 
-    .chart {
+    .chart, .thermometer-chart {
         max-width: 100%;
+        height: 300px;
     }
 
-    .thermometer-chart {
-        height: 200px;
-    }
-
-    /* Ajustes para los gráficos extendidos */
     .extended-stacked-chart {
         height: 400px; /* Ajustado para pantallas pequeñas */
         max-width: 100%; /* Hacerlo más delgado en pantallas pequeñas */
@@ -570,7 +680,17 @@ footer {
         height: 200px; /* Ajusta según prefieras */
     }
 
-    .forms, .lists {
+    .summary-cards {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .summary-cards .card {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .lists {
         grid-template-columns: 1fr;
     }
 }
