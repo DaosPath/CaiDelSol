@@ -5,15 +5,24 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CaiDelSol - Gestor de Presupuestos</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>CaiDelSol - Gestor de Ingresos</title>
+    <!-- Google Fonts: Roboto y una fuente decorativa para encabezados -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Great+Vibes&display=swap" rel="stylesheet">
+    <!-- Font Awesome para iconos -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Favicon personalizado -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' stroke='%23FF5722' stroke-width='5' fill='none'/><path d='M30,50 L70,50' stroke='%23FF5722' stroke-width='5' stroke-linecap='round'/></svg>">
+    <!-- CSS Personalizado -->
     <link rel="stylesheet" href="styles.css">
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <header>
-        <h1>CaiDelSol</h1>
+        <div class="logo">
+            <i class="fas fa-dragon"></i>
+            <h1>CaiDelSol</h1>
+        </div>
         <div class="header-controls">
             <select id="currency-selector">
                 <option value="USD" selected>USD ($)</option>
@@ -29,19 +38,19 @@
 
     <main>
         <section class="forms">
-            <form id="budget-form" class="form">
-                <h2><i class="fas fa-wallet"></i> Agregar Presupuesto</h2>
+            <form id="income-form" class="form">
+                <h2><i class="fas fa-wallet"></i> Agregar Ingreso</h2>
                 <div class="form-group">
-                    <input type="text" id="budget-name" placeholder="Nombre del Presupuesto" required>
+                    <input type="text" id="income-name" placeholder="Nombre del Ingreso" required>
                 </div>
                 <div class="form-group">
-                    <input type="number" id="budget-amount" placeholder="Monto" required>
+                    <input type="number" id="income-amount" placeholder="Monto" required>
                 </div>
                 <div class="form-group">
-                    <input type="date" id="budget-date" required>
+                    <input type="date" id="income-date" required>
                 </div>
                 <div class="form-group">
-                    <input type="color" id="budget-color" value="#D84315" required>
+                    <input type="color" id="income-color" value="#FFD700" required>
                 </div>
                 <button type="submit"><i class="fas fa-plus-circle"></i> Agregar</button>
             </form>
@@ -71,7 +80,7 @@
                     <input type="text" id="category-name" placeholder="Nombre de la Categoría" required>
                 </div>
                 <div class="form-group">
-                    <input type="color" id="category-color" value="#FFB74D" required>
+                    <input type="color" id="category-color" value="#32CD32" required>
                 </div>
                 <button type="submit"><i class="fas fa-plus-circle"></i> Agregar</button>
             </form>
@@ -81,8 +90,8 @@
             <h2><i class="fas fa-chart-pie"></i> Resumen</h2>
             <div class="summary-cards">
                 <div class="card">
-                    <h3>Total Presupuesto</h3>
-                    <p><span id="total-budget">0</span></p>
+                    <h3>Total Ingresos</h3>
+                    <p><span id="total-income">0</span></p>
                 </div>
                 <div class="card">
                     <h3>Total Gastos</h3>
@@ -103,11 +112,11 @@
                 <div class="chart">
                     <canvas id="incomes-chart"></canvas>
                 </div>
-                <!-- Gráfico de Ingresos vs Gastos por Mes - Aumentado en altura y hecho más delgado -->
+                <!-- Gráfico de Ingresos vs Gastos por Mes -->
                 <div class="chart extended-stacked-chart">
                     <canvas id="stacked-chart"></canvas>
                 </div>
-                <!-- Gráfico de Porcentaje del Presupuesto Gastado - Más largo sin aumentar altura -->
+                <!-- Gráfico de Porcentaje del Presupuesto Gastado -->
                 <div class="chart thermometer-chart extended-thermometer-chart">
                     <canvas id="thermometer-chart"></canvas>
                 </div>
@@ -116,8 +125,8 @@
 
         <section class="lists">
             <div class="list">
-                <h2><i class="fas fa-wallet"></i> Presupuestos</h2>
-                <ul id="budget-list"></ul>
+                <h2><i class="fas fa-wallet"></i> Ingresos</h2>
+                <ul id="income-list"></ul>
             </div>
 
             <div class="list">
@@ -184,26 +193,26 @@
         </div>
     </div>
 
-    <!-- Modal para editar Presupuesto -->
-    <div id="edit-budget-modal" class="modal">
+    <!-- Modal para editar Ingreso -->
+    <div id="edit-income-modal" class="modal">
         <div class="modal-content">
-            <span class="close" id="close-budget-modal">&times;</span>
-            <h2><i class="fas fa-edit"></i> Editar Presupuesto</h2>
-            <form id="edit-budget-form">
+            <span class="close" id="close-income-modal">&times;</span>
+            <h2><i class="fas fa-edit"></i> Editar Ingreso</h2>
+            <form id="edit-income-form">
                 <div class="form-group">
-                    <input type="hidden" id="edit-budget-index">
+                    <input type="hidden" id="edit-income-index">
                 </div>
                 <div class="form-group">
-                    <input type="text" id="edit-budget-name" placeholder="Nombre del Presupuesto" required>
+                    <input type="text" id="edit-income-name" placeholder="Nombre del Ingreso" required>
                 </div>
                 <div class="form-group">
-                    <input type="number" id="edit-budget-amount" placeholder="Monto" required>
+                    <input type="number" id="edit-income-amount" placeholder="Monto" required>
                 </div>
                 <div class="form-group">
-                    <input type="date" id="edit-budget-date" required>
+                    <input type="date" id="edit-income-date" required>
                 </div>
                 <div class="form-group">
-                    <input type="color" id="edit-budget-color" required>
+                    <input type="color" id="edit-income-color" required>
                 </div>
                 <button type="submit"><i class="fas fa-save"></i> Guardar Cambios</button>
             </form>

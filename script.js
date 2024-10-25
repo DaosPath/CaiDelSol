@@ -1,13 +1,13 @@
 // script.js
 
 // Selección de elementos del DOM
-const budgetForm = document.getElementById('budget-form');
+const incomeForm = document.getElementById('income-form');
 const expenseForm = document.getElementById('expense-form');
 const categoryForm = document.getElementById('category-form');
-const budgetList = document.getElementById('budget-list');
+const incomeList = document.getElementById('income-list');
 const expenseList = document.getElementById('expense-list');
 const categoryList = document.getElementById('category-list');
-const totalBudgetEl = document.getElementById('total-budget');
+const totalIncomeEl = document.getElementById('total-income');
 const totalExpensesEl = document.getElementById('total-expenses');
 const balanceEl = document.getElementById('balance');
 const expensesChartCtx = document.getElementById('expenses-chart').getContext('2d');
@@ -35,18 +35,18 @@ const editExpenseAmount = document.getElementById('edit-expense-amount');
 const editExpenseDate = document.getElementById('edit-expense-date');
 const editExpenseCategorySelect = document.getElementById('edit-expense-category');
 
-const editBudgetModal = document.getElementById('edit-budget-modal');
-const closeBudgetModal = document.getElementById('close-budget-modal');
-const editBudgetForm = document.getElementById('edit-budget-form');
-const editBudgetIndex = document.getElementById('edit-budget-index');
-const editBudgetName = document.getElementById('edit-budget-name');
-const editBudgetAmount = document.getElementById('edit-budget-amount');
-const editBudgetDate = document.getElementById('edit-budget-date');
-const editBudgetColor = document.getElementById('edit-budget-color');
+const editIncomeModal = document.getElementById('edit-income-modal');
+const closeIncomeModal = document.getElementById('close-income-modal');
+const editIncomeForm = document.getElementById('edit-income-form');
+const editIncomeIndex = document.getElementById('edit-income-index');
+const editIncomeName = document.getElementById('edit-income-name');
+const editIncomeAmount = document.getElementById('edit-income-amount');
+const editIncomeDate = document.getElementById('edit-income-date');
+const editIncomeColor = document.getElementById('edit-income-color');
 
 // Datos por defecto
 const defaultCategories = [
-    { name: 'Alimentación', color: '#FFB74D', isDefault: true },
+    { name: 'Alimentación', color: '#32CD32', isDefault: true },
     { name: 'Transporte', color: '#FF9800', isDefault: true },
     { name: 'Entretenimiento', color: '#FFA726', isDefault: true },
     { name: 'Salud', color: '#FB8C00', isDefault: true },
@@ -54,7 +54,7 @@ const defaultCategories = [
 ];
 
 // Variables para almacenar datos
-let budgets = [];
+let incomes = [];
 let expenses = [];
 let categories = [];
 let selectedCurrency = 'USD';
@@ -77,11 +77,11 @@ let thermometerChart;
 
 // Función para cargar datos desde LocalStorage
 function loadData() {
-    const storedBudgets = localStorage.getItem('budgets');
+    const storedIncomes = localStorage.getItem('incomes');
     const storedExpenses = localStorage.getItem('expenses');
     const storedCategories = localStorage.getItem('categories');
     const storedCurrency = localStorage.getItem('currency');
-    budgets = storedBudgets ? JSON.parse(storedBudgets) : [];
+    incomes = storedIncomes ? JSON.parse(storedIncomes) : [];
     expenses = storedExpenses ? JSON.parse(storedExpenses) : [];
     categories = storedCategories ? JSON.parse(storedCategories) : defaultCategories;
     selectedCurrency = storedCurrency ? storedCurrency : 'USD';
@@ -90,7 +90,7 @@ function loadData() {
 
 // Función para guardar datos en LocalStorage
 function saveData() {
-    localStorage.setItem('budgets', JSON.stringify(budgets));
+    localStorage.setItem('incomes', JSON.stringify(incomes));
     localStorage.setItem('expenses', JSON.stringify(expenses));
     localStorage.setItem('categories', JSON.stringify(categories));
     localStorage.setItem('currency', selectedCurrency);
@@ -98,29 +98,29 @@ function saveData() {
 
 // Función para actualizar el resumen
 function updateSummary() {
-    const totalBudget = budgets.reduce((acc, budget) => acc + Number(budget.amount), 0);
+    const totalIncome = incomes.reduce((acc, income) => acc + Number(income.amount), 0);
     const totalExpenses = expenses.reduce((acc, expense) => acc + Number(expense.amount), 0);
-    const balance = totalBudget - totalExpenses;
+    const balance = totalIncome - totalExpenses;
 
-    totalBudgetEl.textContent = `${currencySymbols[selectedCurrency]}${totalBudget.toFixed(2)}`;
+    totalIncomeEl.textContent = `${currencySymbols[selectedCurrency]}${totalIncome.toFixed(2)}`;
     totalExpensesEl.textContent = `${currencySymbols[selectedCurrency]}${totalExpenses.toFixed(2)}`;
     balanceEl.textContent = `${currencySymbols[selectedCurrency]}${balance.toFixed(2)}`;
 }
 
 // Función para renderizar las listas
 function renderLists() {
-    // Renderizar presupuestos
-    budgetList.innerHTML = '';
-    budgets.forEach((budget, index) => {
+    // Renderizar ingresos
+    incomeList.innerHTML = '';
+    incomes.forEach((income, index) => {
         const li = document.createElement('li');
         li.innerHTML = `
-            <span>${budget.name}: ${currencySymbols[selectedCurrency]}${Number(budget.amount).toFixed(2)}</span>
+            <span>${income.name}: ${currencySymbols[selectedCurrency]}${Number(income.amount).toFixed(2)}</span>
             <div>
-                <button class="edit-btn" data-type="budget" data-index="${index}"><i class="fas fa-edit"></i> Editar</button>
-                <button class="delete-btn" data-type="budget" data-index="${index}"><i class="fas fa-trash-alt"></i> Eliminar</button>
+                <button class="edit-btn" data-type="income" data-index="${index}"><i class="fas fa-edit"></i> Editar</button>
+                <button class="delete-btn" data-type="income" data-index="${index}"><i class="fas fa-trash-alt"></i> Eliminar</button>
             </div>
         `;
-        budgetList.appendChild(li);
+        incomeList.appendChild(li);
     });
 
     // Renderizar gastos
@@ -204,8 +204,8 @@ function deleteItem(e) {
     const type = e.target.closest('button').getAttribute('data-type');
     const index = e.target.closest('button').getAttribute('data-index');
 
-    if (type === 'budget') {
-        budgets.splice(index, 1);
+    if (type === 'income') {
+        incomes.splice(index, 1);
     } else if (type === 'expense') {
         expenses.splice(index, 1);
     } else if (type === 'category') {
@@ -243,14 +243,14 @@ function openEditModal(e) {
         editExpenseDate.value = expense.date;
         editExpenseCategorySelect.value = expense.category;
         editExpenseModal.style.display = 'block';
-    } else if (type === 'budget') {
-        const budget = budgets[index];
-        editBudgetIndex.value = index;
-        editBudgetName.value = budget.name;
-        editBudgetAmount.value = budget.amount;
-        editBudgetDate.value = budget.date;
-        editBudgetColor.value = budget.color;
-        editBudgetModal.style.display = 'block';
+    } else if (type === 'income') {
+        const income = incomes[index];
+        editIncomeIndex.value = index;
+        editIncomeName.value = income.name;
+        editIncomeAmount.value = income.amount;
+        editIncomeDate.value = income.date;
+        editIncomeColor.value = income.color;
+        editIncomeModal.style.display = 'block';
     }
 }
 
@@ -263,8 +263,8 @@ closeExpenseModal.onclick = () => {
     editExpenseModal.style.display = 'none';
 };
 
-closeBudgetModal.onclick = () => {
-    editBudgetModal.style.display = 'none';
+closeIncomeModal.onclick = () => {
+    editIncomeModal.style.display = 'none';
 };
 
 // Cerrar modales al hacer clic fuera del contenido del modal
@@ -275,8 +275,8 @@ window.onclick = (event) => {
     if (event.target == editExpenseModal) {
         editExpenseModal.style.display = 'none';
     }
-    if (event.target == editBudgetModal) {
-        editBudgetModal.style.display = 'none';
+    if (event.target == editIncomeModal) {
+        editIncomeModal.style.display = 'none';
     }
 };
 
@@ -322,44 +322,44 @@ editExpenseForm.addEventListener('submit', (e) => {
     }
 });
 
-editBudgetForm.addEventListener('submit', (e) => {
+editIncomeForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    const index = editBudgetIndex.value;
-    const name = editBudgetName.value.trim();
-    const amount = editBudgetAmount.value.trim();
-    const date = editBudgetDate.value;
-    const color = editBudgetColor.value;
+    const index = editIncomeIndex.value;
+    const name = editIncomeName.value.trim();
+    const amount = editIncomeAmount.value.trim();
+    const date = editIncomeDate.value;
+    const color = editIncomeColor.value;
 
     if (name && amount && date && color && !isNaN(amount) && Number(amount) > 0) {
-        budgets[index].name = name;
-        budgets[index].amount = Number(amount);
-        budgets[index].date = date;
-        budgets[index].color = color;
+        incomes[index].name = name;
+        incomes[index].amount = Number(amount);
+        incomes[index].date = date;
+        incomes[index].color = color;
         saveData();
         renderLists();
         updateSummary();
         updateCharts();
-        editBudgetModal.style.display = 'none';
+        editIncomeModal.style.display = 'none';
     } else {
         alert('Por favor, completa todos los campos con valores válidos.');
     }
 });
 
 // Eventos para los formularios principales
-budgetForm.addEventListener('submit', (e) => {
+incomeForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    const name = document.getElementById('budget-name').value.trim();
-    const amount = document.getElementById('budget-amount').value.trim();
-    const date = document.getElementById('budget-date').value;
-    const color = document.getElementById('budget-color').value;
+    const name = document.getElementById('income-name').value.trim();
+    const amount = document.getElementById('income-amount').value.trim();
+    const date = document.getElementById('income-date').value;
+    const color = document.getElementById('income-color').value;
 
     if (name && amount && date && color && !isNaN(amount) && Number(amount) > 0) {
-        budgets.push({ name, amount: Number(amount), date, color });
+        incomes.push({ name, amount: Number(amount), date, color });
         saveData();
         renderLists();
         updateSummary();
         updateCharts();
-        budgetForm.reset();
+        incomeForm.reset();
     } else {
         alert('Por favor, ingresa un nombre válido, monto positivo, selecciona una fecha y un color.');
     }
@@ -402,9 +402,9 @@ categoryForm.addEventListener('submit', (e) => {
 
 // Evento para reiniciar todos los datos
 resetBtn.addEventListener('click', () => {
-    const confirmReset = confirm('¿Estás seguro de que deseas reiniciar todo? Esto eliminará todos los presupuestos, gastos y categorías personalizadas.');
+    const confirmReset = confirm('¿Estás seguro de que deseas reiniciar todo? Esto eliminará todos los ingresos, gastos y categorías personalizadas.');
     if (confirmReset) {
-        budgets = [];
+        incomes = [];
         expenses = [];
         categories = [...defaultCategories];
         selectedCurrency = 'USD';
@@ -445,22 +445,22 @@ function initCharts() {
                 legend: {
                     position: 'bottom',
                     labels: {
-                        color: '#3E2723'
+                        color: '#4E342E'
                     }
                 },
                 title: {
                     display: true,
                     text: 'Gastos',
-                    color: '#D84315',
+                    color: '#FF5722',
                     font: {
                         size: 18,
                         weight: '600'
                     }
                 },
                 tooltip: {
-                    backgroundColor: '#FFB74D',
-                    titleColor: '#3E2723',
-                    bodyColor: '#3E2723'
+                    backgroundColor: '#FF9800',
+                    titleColor: '#4E342E',
+                    bodyColor: '#4E342E'
                 }
             }
         }
@@ -472,7 +472,7 @@ function initCharts() {
         data: {
             labels: [],
             datasets: [{
-                label: 'Ingresos por Presupuesto',
+                label: 'Ingresos por Ingreso',
                 data: [],
                 backgroundColor: []
             }]
@@ -484,28 +484,28 @@ function initCharts() {
                 legend: {
                     position: 'bottom',
                     labels: {
-                        color: '#3E2723'
+                        color: '#4E342E'
                     }
                 },
                 title: {
                     display: true,
                     text: 'Ingresos',
-                    color: '#D84315',
+                    color: '#FF5722',
                     font: {
                         size: 18,
                         weight: '600'
                     }
                 },
                 tooltip: {
-                    backgroundColor: '#FFB74D',
-                    titleColor: '#3E2723',
-                    bodyColor: '#3E2723'
+                    backgroundColor: '#FF9800',
+                    titleColor: '#4E342E',
+                    bodyColor: '#4E342E'
                 }
             }
         }
     });
 
-    // Gráfico de Pila Vertical (Ingresos vs Gastos por Mes) - Aumentado en altura y más delgado
+    // Gráfico de Pila Vertical (Ingresos vs Gastos por Mes)
     stackedChart = new Chart(stackedChartCtx, {
         type: 'bar',
         data: {
@@ -514,12 +514,12 @@ function initCharts() {
                 {
                     label: 'Ingresos',
                     data: [],
-                    backgroundColor: '#D84315'
+                    backgroundColor: '#FF5722'
                 },
                 {
                     label: 'Gastos',
                     data: [],
-                    backgroundColor: '#FFB74D'
+                    backgroundColor: '#FF9800'
                 }
             ]
         },
@@ -530,13 +530,13 @@ function initCharts() {
                 legend: {
                     position: 'bottom',
                     labels: {
-                        color: '#3E2723'
+                        color: '#4E342E'
                     }
                 },
                 title: {
                     display: true,
                     text: 'Ingresos vs Gastos por Mes',
-                    color: '#D84315',
+                    color: '#FF5722',
                     font: {
                         size: 18,
                         weight: '600'
@@ -549,10 +549,10 @@ function initCharts() {
                     title: {
                         display: true,
                         text: 'Mes',
-                        color: '#D84315'
+                        color: '#FF5722'
                     },
                     ticks: {
-                        color: '#3E2723',
+                        color: '#4E342E',
                         maxRotation: 90,
                         minRotation: 45
                     }
@@ -563,17 +563,17 @@ function initCharts() {
                     title: {
                         display: true,
                         text: `Monto (${currencySymbols[selectedCurrency]})`,
-                        color: '#D84315'
+                        color: '#FF5722'
                     },
                     ticks: {
-                        color: '#3E2723'
+                        color: '#4E342E'
                     }
                 }
             }
         }
     });
 
-    // Gráfico Termómetro (Porcentaje del Presupuesto Gastado) - Más largo sin aumentar altura
+    // Gráfico Termómetro (Porcentaje del Presupuesto Gastado)
     thermometerChart = new Chart(thermometerChartCtx, {
         type: 'bar',
         data: {
@@ -581,7 +581,7 @@ function initCharts() {
             datasets: [{
                 label: '% Gastado',
                 data: [0],
-                backgroundColor: ['#D84315'],
+                backgroundColor: ['#FF5722'],
                 borderRadius: 20
             }]
         },
@@ -595,8 +595,8 @@ function initCharts() {
                 },
                 title: {
                     display: true,
-                    text: 'Porcentaje del Presupuesto Gastado',
-                    color: '#D84315',
+                    text: 'Porcentaje del Ingreso Gastado',
+                    color: '#FF5722',
                     font: {
                         size: 18,
                         weight: '600'
@@ -608,9 +608,9 @@ function initCharts() {
                             return `${context.parsed.x}%`;
                         }
                     },
-                    backgroundColor: '#FFB74D',
-                    titleColor: '#3E2723',
-                    bodyColor: '#3E2723'
+                    backgroundColor: '#FF9800',
+                    titleColor: '#4E342E',
+                    bodyColor: '#4E342E'
                 }
             },
             scales: {
@@ -618,7 +618,7 @@ function initCharts() {
                     beginAtZero: true,
                     max: 100,
                     ticks: {
-                        color: '#3E2723',
+                        color: '#4E342E',
                         callback: function(value) {
                             return value + '%';
                         }
@@ -629,12 +629,12 @@ function initCharts() {
                     title: {
                         display: true,
                         text: 'Porcentaje',
-                        color: '#D84315'
+                        color: '#FF5722'
                     }
                 },
                 y: {
                     ticks: {
-                        color: '#3E2723'
+                        color: '#4E342E'
                     },
                     grid: {
                         display: false
@@ -666,27 +666,27 @@ function updateCharts() {
 
     // Actualizar Gráfico de Ingresos
     const incomeTotals = {};
-    budgets.forEach(budget => {
-        if (incomeTotals[budget.name]) {
-            incomeTotals[budget.name] += budget.amount;
+    incomes.forEach(income => {
+        if (incomeTotals[income.name]) {
+            incomeTotals[income.name] += income.amount;
         } else {
-            incomeTotals[budget.name] = budget.amount;
+            incomeTotals[income.name] = income.amount;
         }
     });
 
     incomesChart.data.labels = Object.keys(incomeTotals);
     incomesChart.data.datasets[0].data = Object.values(incomeTotals);
-    incomesChart.data.datasets[0].backgroundColor = budgets.map(budget => budget.color);
+    incomesChart.data.datasets[0].backgroundColor = incomes.map(income => income.color);
     incomesChart.update();
 
     // Actualizar Gráfico de Pila Vertical (Ingresos vs Gastos por Mes)
     const incomePerMonth = {};
-    budgets.forEach(budget => {
-        const month = new Date(budget.date).toLocaleString('default', { month: 'short', year: 'numeric' });
+    incomes.forEach(income => {
+        const month = new Date(income.date).toLocaleString('default', { month: 'short', year: 'numeric' });
         if (incomePerMonth[month]) {
-            incomePerMonth[month] += budget.amount;
+            incomePerMonth[month] += income.amount;
         } else {
-            incomePerMonth[month] = budget.amount;
+            incomePerMonth[month] = income.amount;
         }
     });
 
@@ -709,9 +709,9 @@ function updateCharts() {
     stackedChart.update();
 
     // Actualizar Gráfico Termómetro
-    const totalBudget = budgets.reduce((acc, budget) => acc + Number(budget.amount), 0);
+    const totalIncome = incomes.reduce((acc, income) => acc + Number(income.amount), 0);
     const totalExpenses = expenses.reduce((acc, expense) => acc + Number(expense.amount), 0);
-    const percentageSpent = totalBudget ? Math.min(((totalExpenses / totalBudget) * 100).toFixed(2), 100) : 0;
+    const percentageSpent = totalIncome ? Math.min(((totalExpenses / totalIncome) * 100).toFixed(2), 100) : 0;
 
     thermometerChart.data.datasets[0].data = [percentageSpent];
     thermometerChart.update();
