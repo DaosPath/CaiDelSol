@@ -1,6 +1,3 @@
-// script.js
-
-// Selección de elementos del DOM
 const incomeForm = document.getElementById('income-form');
 const expenseForm = document.getElementById('expense-form');
 const categoryForm = document.getElementById('category-form');
@@ -12,13 +9,15 @@ const totalExpensesEl = document.getElementById('total-expenses');
 const balanceEl = document.getElementById('balance');
 const expensesChartCtx = document.getElementById('expenses-chart').getContext('2d');
 const incomesChartCtx = document.getElementById('incomes-chart').getContext('2d');
-const stackedChartCtx = document.getElementById('stacked-chart').getContext('2d'); // Gráfico de Ingresos vs Gastos por Mes
-const thermometerChartCtx = document.getElementById('thermometer-chart').getContext('2d'); // Gráfico de Porcentaje del Presupuesto Gastado
+const stackedChartCtx = document.getElementById('stacked-chart').getContext('2d');
+const thermometerChartCtx = document.getElementById('thermometer-chart').getContext('2d');
 const expenseCategorySelect = document.getElementById('expense-category');
 const resetBtn = document.getElementById('reset-btn');
 const currencySelector = document.getElementById('currency-selector');
+const exportBtn = document.getElementById('export-btn');
+const importBtn = document.getElementById('import-btn');
+const importFileInput = document.getElementById('import-file');
 
-// Modales
 const editCategoryModal = document.getElementById('edit-category-modal');
 const closeCategoryModal = document.getElementById('close-category-modal');
 const editCategoryForm = document.getElementById('edit-category-form');
@@ -44,7 +43,6 @@ const editIncomeAmount = document.getElementById('edit-income-amount');
 const editIncomeDate = document.getElementById('edit-income-date');
 const editIncomeColor = document.getElementById('edit-income-color');
 
-// Datos por defecto
 const defaultCategories = [
     { name: 'Alimentación', color: '#32CD32', isDefault: true },
     { name: 'Transporte', color: '#FF9800', isDefault: true },
@@ -53,13 +51,11 @@ const defaultCategories = [
     { name: 'Otros', color: '#FFCC80', isDefault: true }
 ];
 
-// Variables para almacenar datos
 let incomes = [];
 let expenses = [];
 let categories = [];
 let selectedCurrency = 'USD';
 
-// Símbolos de moneda
 const currencySymbols = {
     'USD': '$',
     'EUR': '€',
@@ -69,13 +65,11 @@ const currencySymbols = {
     'PEN': 'S/'
 };
 
-// Instancias de Chart.js
 let expensesChart;
 let incomesChart;
 let stackedChart;
 let thermometerChart;
 
-// Función para cargar datos desde LocalStorage
 function loadData() {
     const storedIncomes = localStorage.getItem('incomes');
     const storedExpenses = localStorage.getItem('expenses');
@@ -88,7 +82,6 @@ function loadData() {
     currencySelector.value = selectedCurrency;
 }
 
-// Función para guardar datos en LocalStorage
 function saveData() {
     localStorage.setItem('incomes', JSON.stringify(incomes));
     localStorage.setItem('expenses', JSON.stringify(expenses));
@@ -96,7 +89,6 @@ function saveData() {
     localStorage.setItem('currency', selectedCurrency);
 }
 
-// Función para actualizar el resumen
 function updateSummary() {
     const totalIncome = incomes.reduce((acc, income) => acc + Number(income.amount), 0);
     const totalExpenses = expenses.reduce((acc, expense) => acc + Number(expense.amount), 0);
@@ -107,9 +99,7 @@ function updateSummary() {
     balanceEl.textContent = `${currencySymbols[selectedCurrency]}${balance.toFixed(2)}`;
 }
 
-// Función para renderizar las listas
 function renderLists() {
-    // Renderizar ingresos
     incomeList.innerHTML = '';
     incomes.forEach((income, index) => {
         const li = document.createElement('li');
@@ -123,7 +113,6 @@ function renderLists() {
         incomeList.appendChild(li);
     });
 
-    // Renderizar gastos
     expenseList.innerHTML = '';
     expenses.forEach((expense, index) => {
         const li = document.createElement('li');
@@ -140,7 +129,6 @@ function renderLists() {
         expenseList.appendChild(li);
     });
 
-    // Renderizar categorías
     categoryList.innerHTML = '';
     categories.forEach((category, index) => {
         const li = document.createElement('li');
@@ -160,7 +148,6 @@ function renderLists() {
     populateCategorySelect();
     populateEditExpenseCategorySelect();
 
-    // Agregar eventos a los botones de eliminar y editar
     document.querySelectorAll('.delete-btn').forEach(button => {
         button.addEventListener('click', deleteItem);
     });
@@ -170,14 +157,12 @@ function renderLists() {
     });
 }
 
-// Función para formatear fechas
 function formatDate(dateStr) {
     if (!dateStr) return 'Sin fecha';
     const date = new Date(dateStr);
     return date.toLocaleDateString('es-ES');
 }
 
-// Función para poblar el select de categorías en gastos
 function populateCategorySelect() {
     expenseCategorySelect.innerHTML = '<option value="" disabled selected>Selecciona Categoría</option>';
     categories.forEach(category => {
@@ -188,7 +173,6 @@ function populateCategorySelect() {
     });
 }
 
-// Función para poblar el select de categorías en el modal de edición de gastos
 function populateEditExpenseCategorySelect() {
     editExpenseCategorySelect.innerHTML = '<option value="" disabled selected>Selecciona Categoría</option>';
     categories.forEach(category => {
@@ -199,7 +183,6 @@ function populateEditExpenseCategorySelect() {
     });
 }
 
-// Función para eliminar elementos
 function deleteItem(e) {
     const type = e.target.closest('button').getAttribute('data-type');
     const index = e.target.closest('button').getAttribute('data-index');
@@ -224,7 +207,6 @@ function deleteItem(e) {
     updateCharts();
 }
 
-// Función para abrir el modal de edición
 function openEditModal(e) {
     const type = e.target.closest('button').getAttribute('data-type');
     const index = e.target.closest('button').getAttribute('data-index');
@@ -239,7 +221,7 @@ function openEditModal(e) {
         const expense = expenses[index];
         editExpenseIndex.value = index;
         editExpenseName.value = expense.name;
-        editExpenseAmount.value = expense.amount;
+        editExpenseAmount.value = expense.amount.toFixed(2);
         editExpenseDate.value = expense.date;
         editExpenseCategorySelect.value = expense.category;
         editExpenseModal.style.display = 'block';
@@ -247,14 +229,13 @@ function openEditModal(e) {
         const income = incomes[index];
         editIncomeIndex.value = index;
         editIncomeName.value = income.name;
-        editIncomeAmount.value = income.amount;
+        editIncomeAmount.value = income.amount.toFixed(2);
         editIncomeDate.value = income.date;
         editIncomeColor.value = income.color;
         editIncomeModal.style.display = 'block';
     }
 }
 
-// Cerrar modales al hacer clic en la "X"
 closeCategoryModal.onclick = () => {
     editCategoryModal.style.display = 'none';
 };
@@ -267,7 +248,6 @@ closeIncomeModal.onclick = () => {
     editIncomeModal.style.display = 'none';
 };
 
-// Cerrar modales al hacer clic fuera del contenido del modal
 window.onclick = (event) => {
     if (event.target == editCategoryModal) {
         editCategoryModal.style.display = 'none';
@@ -280,7 +260,6 @@ window.onclick = (event) => {
     }
 };
 
-// Eventos para los formularios de edición
 editCategoryForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const index = editCategoryIndex.value;
@@ -303,7 +282,7 @@ editExpenseForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const index = editExpenseIndex.value;
     const name = editExpenseName.value.trim();
-    const amount = editExpenseAmount.value.trim();
+    const amount = parseFloat(editExpenseAmount.value).toFixed(2);
     const date = editExpenseDate.value;
     const category = editExpenseCategorySelect.value;
 
@@ -326,7 +305,7 @@ editIncomeForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const index = editIncomeIndex.value;
     const name = editIncomeName.value.trim();
-    const amount = editIncomeAmount.value.trim();
+    const amount = parseFloat(editIncomeAmount.value).toFixed(2);
     const date = editIncomeDate.value;
     const color = editIncomeColor.value;
 
@@ -345,11 +324,10 @@ editIncomeForm.addEventListener('submit', (e) => {
     }
 });
 
-// Eventos para los formularios principales
 incomeForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const name = document.getElementById('income-name').value.trim();
-    const amount = document.getElementById('income-amount').value.trim();
+    const amount = parseFloat(document.getElementById('income-amount').value.trim()).toFixed(2);
     const date = document.getElementById('income-date').value;
     const color = document.getElementById('income-color').value;
 
@@ -368,7 +346,7 @@ incomeForm.addEventListener('submit', (e) => {
 expenseForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const name = document.getElementById('expense-name').value.trim();
-    const amount = document.getElementById('expense-amount').value.trim();
+    const amount = parseFloat(document.getElementById('expense-amount').value.trim()).toFixed(2);
     const date = document.getElementById('expense-date').value;
     const category = document.getElementById('expense-category').value;
 
@@ -400,7 +378,6 @@ categoryForm.addEventListener('submit', (e) => {
     }
 });
 
-// Evento para reiniciar todos los datos
 resetBtn.addEventListener('click', () => {
     const confirmReset = confirm('¿Estás seguro de que deseas reiniciar todo? Esto eliminará todos los ingresos, gastos y categorías personalizadas.');
     if (confirmReset) {
@@ -416,7 +393,6 @@ resetBtn.addEventListener('click', () => {
     }
 });
 
-// Evento para cambiar la moneda
 currencySelector.addEventListener('change', (e) => {
     selectedCurrency = e.target.value;
     saveData();
@@ -425,9 +401,110 @@ currencySelector.addEventListener('change', (e) => {
     updateCharts();
 });
 
-// Función para inicializar los gráficos
+exportBtn.addEventListener('click', () => {
+    const exportData = {
+        createdAt: new Date().toLocaleString('es-ES'),
+        incomes,
+        expenses,
+        categories
+    };
+    let txtContent = '# Exportado por CaiDelSol\n';
+    txtContent += `Fecha de Exportación: ${exportData.createdAt}\n\n`;
+
+    txtContent += '## Ingresos\n';
+    exportData.incomes.forEach(income => {
+        txtContent += `- Nombre: ${income.name}\n  Monto: ${income.amount.toFixed(2)}\n  Fecha: ${income.date}\n  Color: ${income.color}\n\n`;
+    });
+
+    txtContent += '## Gastos\n';
+    exportData.expenses.forEach(expense => {
+        txtContent += `- Nombre: ${expense.name}\n  Monto: ${expense.amount.toFixed(2)}\n  Fecha: ${expense.date}\n  Categoría: ${expense.category}\n\n`;
+    });
+
+    txtContent += '## Categorías\n';
+    exportData.categories.forEach(category => {
+        txtContent += `- Nombre: ${category.name}\n  Color: ${category.color}\n  Predeterminada: ${category.isDefault}\n\n`;
+    });
+
+    const blob = new Blob([txtContent], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'presupuesto.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+    alert('Presupuesto exportado correctamente.');
+});
+
+importBtn.addEventListener('click', () => {
+    importFileInput.click();
+});
+
+importFileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        const content = event.target.result;
+        if (!content.startsWith('# Exportado por CaiDelSol')) {
+            alert('El archivo no es válido o no proviene de CaiDelSol.');
+            return;
+        }
+        const sections = content.split('## ').slice(1);
+        const newData = {};
+        sections.forEach(section => {
+            const [title, ...lines] = section.split('\n');
+            newData[title.trim()] = lines.filter(line => line.trim() !== '');
+        });
+        if (!newData['Fecha de Exportación:']) {
+            alert('El archivo no contiene la fecha de exportación.');
+            return;
+        }
+        if (!newData['Ingresos'] || !newData['Gastos'] || !newData['Categorías']) {
+            alert('El archivo no contiene todas las secciones necesarias.');
+            return;
+        }
+        const importedIncomes = [];
+        newData['Ingresos'].forEach(line => {
+            if (line.startsWith('- Nombre:')) {
+                const name = line.split(':')[1].trim();
+                const monto = parseFloat(newData['Ingresos'][newData['Ingresos'].indexOf(line) + 1].split(':')[1].trim());
+                const fecha = newData['Ingresos'][newData['Ingresos'].indexOf(line) + 2].split(':')[1].trim();
+                const color = newData['Ingresos'][newData['Ingresos'].indexOf(line) + 3].split(':')[1].trim();
+                importedIncomes.push({ name, amount: monto, date: fecha, color });
+            }
+        });
+        const importedExpenses = [];
+        newData['Gastos'].forEach(line => {
+            if (line.startsWith('- Nombre:')) {
+                const name = line.split(':')[1].trim();
+                const monto = parseFloat(newData['Gastos'][newData['Gastos'].indexOf(line) + 1].split(':')[1].trim());
+                const fecha = newData['Gastos'][newData['Gastos'].indexOf(line) + 2].split(':')[1].trim();
+                const categoria = newData['Gastos'][newData['Gastos'].indexOf(line) + 3].split(':')[1].trim();
+                importedExpenses.push({ name, amount: monto, date: fecha, category: categoria });
+            }
+        });
+        const importedCategories = [];
+        newData['Categorías'].forEach(line => {
+            if (line.startsWith('- Nombre:')) {
+                const name = line.split(':')[1].trim();
+                const color = newData['Categorías'][newData['Categorías'].indexOf(line) + 1].split(':')[1].trim();
+                const isDefault = newData['Categorías'][newData['Categorías'].indexOf(line) + 2].split(':')[1].trim() === 'true';
+                importedCategories.push({ name, color, isDefault });
+            }
+        });
+        incomes = importedIncomes;
+        expenses = importedExpenses;
+        categories = importedCategories;
+        saveData();
+        renderLists();
+        updateSummary();
+        updateCharts();
+        alert('Presupuesto importado correctamente.');
+    };
+    reader.readAsText(file);
+});
 function initCharts() {
-    // Gráfico de Gastos (Pie)
     expensesChart = new Chart(expensesChartCtx, {
         type: 'pie',
         data: {
@@ -440,12 +517,16 @@ function initCharts() {
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false, // Permite que el gráfico ocupe todo el contenedor
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     position: 'bottom',
                     labels: {
-                        color: '#4E342E'
+                        color: '#4E342E',
+                        font: {
+                            family: 'var(--chart-font)',
+                            size: 14
+                        }
                     }
                 },
                 title: {
@@ -454,19 +535,29 @@ function initCharts() {
                     color: '#FF5722',
                     font: {
                         size: 18,
-                        weight: '600'
+                        weight: '600',
+                        family: 'var(--chart-font)'
                     }
                 },
                 tooltip: {
                     backgroundColor: '#FF9800',
                     titleColor: '#4E342E',
-                    bodyColor: '#4E342E'
+                    bodyColor: '#4E342E',
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.parsed || 0;
+                            return `${label}: ${currencySymbols[selectedCurrency]}${value.toFixed(2)}`;
+                        }
+                    }
                 }
+            },
+            layout: {
+                padding: 20
             }
         }
     });
 
-    // Gráfico de Ingresos (Pie)
     incomesChart = new Chart(incomesChartCtx, {
         type: 'pie',
         data: {
@@ -479,12 +570,16 @@ function initCharts() {
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false, // Permite que el gráfico ocupe todo el contenedor
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     position: 'bottom',
                     labels: {
-                        color: '#4E342E'
+                        color: '#4E342E',
+                        font: {
+                            family: 'var(--chart-font)',
+                            size: 14
+                        }
                     }
                 },
                 title: {
@@ -493,44 +588,60 @@ function initCharts() {
                     color: '#FF5722',
                     font: {
                         size: 18,
-                        weight: '600'
+                        weight: '600',
+                        family: 'var(--chart-font)'
                     }
                 },
                 tooltip: {
                     backgroundColor: '#FF9800',
                     titleColor: '#4E342E',
-                    bodyColor: '#4E342E'
+                    bodyColor: '#4E342E',
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.parsed || 0;
+                            return `${label}: ${currencySymbols[selectedCurrency]}${value.toFixed(2)}`;
+                        }
+                    }
                 }
+            },
+            layout: {
+                padding: 20
             }
         }
     });
 
-    // Gráfico de Pila Vertical (Ingresos vs Gastos por Mes)
     stackedChart = new Chart(stackedChartCtx, {
         type: 'bar',
         data: {
-            labels: [], // Meses
+            labels: [],
             datasets: [
                 {
                     label: 'Ingresos',
                     data: [],
-                    backgroundColor: '#FF5722'
+                    backgroundColor: '#4CAF50',
+                    borderRadius: 5
                 },
                 {
                     label: 'Gastos',
                     data: [],
-                    backgroundColor: '#FF9800'
+                    backgroundColor: '#F44336',
+                    borderRadius: 5
                 }
             ]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false, // Permite que el gráfico ocupe todo el contenedor
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     position: 'bottom',
                     labels: {
-                        color: '#4E342E'
+                        color: '#4E342E',
+                        font: {
+                            family: 'var(--chart-font)',
+                            size: 14
+                        }
                     }
                 },
                 title: {
@@ -539,7 +650,8 @@ function initCharts() {
                     color: '#FF5722',
                     font: {
                         size: 18,
-                        weight: '600'
+                        weight: '600',
+                        family: 'var(--chart-font)'
                     }
                 }
             },
@@ -549,12 +661,21 @@ function initCharts() {
                     title: {
                         display: true,
                         text: 'Mes',
-                        color: '#FF5722'
+                        color: '#FF5722',
+                        font: {
+                            family: 'var(--chart-font)',
+                            size: 14,
+                            weight: '600'
+                        }
                     },
                     ticks: {
                         color: '#4E342E',
                         maxRotation: 90,
-                        minRotation: 45
+                        minRotation: 45,
+                        font: {
+                            family: 'var(--chart-font)',
+                            size: 12
+                        }
                     }
                 },
                 y: {
@@ -563,17 +684,28 @@ function initCharts() {
                     title: {
                         display: true,
                         text: `Monto (${currencySymbols[selectedCurrency]})`,
-                        color: '#FF5722'
+                        color: '#FF5722',
+                        font: {
+                            family: 'var(--chart-font)',
+                            size: 14,
+                            weight: '600'
+                        }
                     },
                     ticks: {
-                        color: '#4E342E'
+                        color: '#4E342E',
+                        font: {
+                            family: 'var(--chart-font)',
+                            size: 12
+                        },
+                        callback: function(value) {
+                            return `${currencySymbols[selectedCurrency]}${value.toFixed(2)}`;
+                        }
                     }
                 }
             }
         }
     });
 
-    // Gráfico Termómetro (Porcentaje del Presupuesto Gastado)
     thermometerChart = new Chart(thermometerChartCtx, {
         type: 'bar',
         data: {
@@ -588,7 +720,7 @@ function initCharts() {
         options: {
             indexAxis: 'y',
             responsive: true,
-            maintainAspectRatio: false, // Permite que el gráfico ocupe todo el contenedor
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     display: false
@@ -599,7 +731,8 @@ function initCharts() {
                     color: '#FF5722',
                     font: {
                         size: 18,
-                        weight: '600'
+                        weight: '600',
+                        family: 'var(--chart-font)'
                     }
                 },
                 tooltip: {
@@ -621,6 +754,10 @@ function initCharts() {
                         color: '#4E342E',
                         callback: function(value) {
                             return value + '%';
+                        },
+                        font: {
+                            family: 'var(--chart-font)',
+                            size: 12
                         }
                     },
                     grid: {
@@ -629,12 +766,21 @@ function initCharts() {
                     title: {
                         display: true,
                         text: 'Porcentaje',
-                        color: '#FF5722'
+                        color: '#FF5722',
+                        font: {
+                            family: 'var(--chart-font)',
+                            size: 14,
+                            weight: '600'
+                        }
                     }
                 },
                 y: {
                     ticks: {
-                        color: '#4E342E'
+                        color: '#4E342E',
+                        font: {
+                            family: 'var(--chart-font)',
+                            size: 12
+                        }
                     },
                     grid: {
                         display: false
@@ -645,9 +791,7 @@ function initCharts() {
     });
 }
 
-// Función para actualizar los gráficos
 function updateCharts() {
-    // Actualizar Gráfico de Gastos
     const categoryTotals = {};
     expenses.forEach(expense => {
         if (categoryTotals[expense.category]) {
@@ -664,7 +808,6 @@ function updateCharts() {
         .map(category => category.color);
     expensesChart.update();
 
-    // Actualizar Gráfico de Ingresos
     const incomeTotals = {};
     incomes.forEach(income => {
         if (incomeTotals[income.name]) {
@@ -679,7 +822,6 @@ function updateCharts() {
     incomesChart.data.datasets[0].backgroundColor = incomes.map(income => income.color);
     incomesChart.update();
 
-    // Actualizar Gráfico de Pila Vertical (Ingresos vs Gastos por Mes)
     const incomePerMonth = {};
     incomes.forEach(income => {
         const month = new Date(income.date).toLocaleString('default', { month: 'short', year: 'numeric' });
@@ -708,7 +850,6 @@ function updateCharts() {
     stackedChart.data.datasets[1].data = allMonths.map(month => expensePerMonth[month] || 0);
     stackedChart.update();
 
-    // Actualizar Gráfico Termómetro
     const totalIncome = incomes.reduce((acc, income) => acc + Number(income.amount), 0);
     const totalExpenses = expenses.reduce((acc, expense) => acc + Number(expense.amount), 0);
     const percentageSpent = totalIncome ? Math.min(((totalExpenses / totalIncome) * 100).toFixed(2), 100) : 0;
@@ -717,7 +858,6 @@ function updateCharts() {
     thermometerChart.update();
 }
 
-// Función de inicialización
 function init() {
     loadData();
     initCharts();
@@ -726,5 +866,4 @@ function init() {
     updateCharts();
 }
 
-// Ejecutar la función de inicialización al cargar la página
 init();

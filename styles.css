@@ -1,26 +1,24 @@
-/* styles.css */
-
-/* Definición de Variables CSS para una Gestión de Colores Más Sencilla */
 :root {
-    --primary-color: #FF5722; /* Rojo Anaranjado */
-    --secondary-color: #FFC107; /* Dorado Suave */
-    --background-color: #F3E5F5; /* Lavanda Claro */
-    --card-background: #ffffff; /* Fondo de Tarjetas */
-    --text-color: #4E342E; /* Marrón Oscuro */
-    --light-text-color: #6D4C41; /* Marrón Medio */
-    --border-color: #FFCCBC; /* Rosa Suave */
-    --shadow-color: rgba(0, 0, 0, 0.1); /* Color de Sombra */
-    --hover-shadow: rgba(0, 0, 0, 0.2); /* Color de Sombra al Hover */
-    --font-family: 'Roboto', sans-serif; /* Familia Tipográfica */
-    --header-font: 'Great Vibes', cursive; /* Fuente Decorativa para Encabezados */
-    --transition-speed: 0.3s; /* Velocidad de Transición */
-    --modal-bg: rgba(0, 0, 0, 0.7); /* Fondo de Modal */
-    --gradient-bg: linear-gradient(135deg, #FF7043, #FF5722); /* Fondo con Gradiente */
-    --button-hover: #E64A19; /* Rojo Intenso para Hover */
-    --input-focus: #FFAB91; /* Rosa Claro para Enfoque */
+    --primary-color: #FF5722;
+    --secondary-color: #FFC107;
+    --background-color: #F3E5F5;
+    --card-background: #ffffff;
+    --text-color: #4E342E;
+    --light-text-color: #6D4C41;
+    --border-color: #FFCCBC;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --hover-shadow: rgba(0, 0, 0, 0.2);
+    --font-family: 'Roboto', sans-serif;
+    --header-font: 'Great Vibes', cursive;
+    --transition-speed: 0.3s;
+    --modal-bg: rgba(0, 0, 0, 0.7);
+    --gradient-bg: linear-gradient(135deg, #FF7043, #FF5722);
+    --button-hover: #E64A19;
+    --input-focus: #FFAB91;
+    --chart-font: 'Roboto', sans-serif;
+    --chart-background: #f9f9f9;
 }
 
-/* Reset de Estilos Básicos */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -37,7 +35,6 @@ body {
     transition: background-color var(--transition-speed);
 }
 
-/* Estilos del Header */
 header {
     background: var(--gradient-bg);
     padding: 20px 40px;
@@ -64,7 +61,7 @@ header:hover {
 
 .logo i {
     font-size: 1.8em;
-    color: #FFD700; /* Dorado */
+    color: #FFD700;
     animation: rotateDragon 20s linear infinite;
 }
 
@@ -105,6 +102,8 @@ header h1 {
     box-shadow: 0 0 8px var(--primary-color);
 }
 
+#export-btn,
+#import-btn,
 #reset-btn {
     background-color: var(--primary-color);
     color: #fff;
@@ -120,13 +119,14 @@ header h1 {
     gap: 5px;
 }
 
+#export-btn:hover,
+#import-btn:hover,
 #reset-btn:hover {
     background-color: var(--button-hover);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px var(--hover-shadow);
 }
 
-/* Estilos del Main */
 main {
     flex: 1;
     padding: 40px 60px;
@@ -137,7 +137,6 @@ main {
     transition: padding var(--transition-speed);
 }
 
-/* Estilos de Formularios */
 .forms {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -235,7 +234,6 @@ main {
     box-shadow: 0 4px 12px var(--hover-shadow);
 }
 
-/* Estilos del Resumen */
 .summary {
     background: var(--card-background);
     padding: 30px 25px;
@@ -298,7 +296,6 @@ main {
     font-weight: 700;
 }
 
-/* Contenedor de Gráficos */
 .chart-container {
     background: var(--card-background);
     padding: 30px 25px;
@@ -332,7 +329,7 @@ main {
     position: relative;
     border-radius: 20px;
     overflow: hidden;
-    background: #f5f5f5;
+    background: var(--chart-background);
     box-shadow: 0 2px 8px var(--shadow-color);
     transition: transform var(--transition-speed), box-shadow var(--transition-speed), background-color var(--transition-speed);
     display: flex;
@@ -352,7 +349,7 @@ main {
     height: 150px;
     border-radius: 20px;
     overflow: hidden;
-    background: #f5f5f5;
+    background: var(--chart-background);
     box-shadow: 0 2px 8px var(--shadow-color);
     transition: transform var(--transition-speed), box-shadow var(--transition-speed), background-color var(--transition-speed);
     display: flex;
@@ -370,12 +367,9 @@ main {
     width: 100%;
 }
 
-/* Estilos para los Gráficos Extendidos */
-
-/* Aumentar la altura del gráfico "Ingresos vs Gastos por Mes" y hacerlo más delgado */
 .extended-stacked-chart {
-    height: 400px; /* Aumenta la altura según tus necesidades */
-    max-width: 200px; /* Hacer el gráfico más delgado reduciendo el max-width */
+    height: 400px;
+    max-width: 200px;
 }
 
 .extended-stacked-chart canvas {
@@ -383,12 +377,11 @@ main {
     height: 100% !important;
 }
 
-/* Hacer más largo (más ancho) el gráfico "Porcentaje del Presupuesto Gastado" sin aumentar altura */
 .extended-thermometer-chart {
-    width: 800px; /* Aumenta el ancho para hacerlo más largo */
-    max-width: 100%; /* Asegura que no exceda el contenedor padre en pantallas pequeñas */
-    height: 150px; /* Mantiene la altura original */
-    margin: auto; /* Centra el gráfico horizontalmente */
+    width: 800px;
+    max-width: 100%;
+    height: 150px;
+    margin: auto;
 }
 
 .extended-thermometer-chart canvas {
@@ -396,7 +389,6 @@ main {
     height: 100% !important;
 }
 
-/* Estilos de Listas */
 .lists {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -456,7 +448,7 @@ main {
 }
 
 .list ul::-webkit-scrollbar-thumb:hover {
-    background: #E64A19; /* Rojo Intenso */
+    background: #E64A19;
 }
 
 .list li {
@@ -472,7 +464,7 @@ main {
 }
 
 .list li:hover {
-    background-color: #FFE0B2; /* Beige Claro */
+    background-color: #FFE0B2;
     transform: scale(1.02);
 }
 
@@ -483,7 +475,7 @@ main {
 
 .delete-btn,
 .edit-btn {
-    background-color: var(--primary-color); /* Rojo Anaranjado */
+    background-color: var(--primary-color);
     border: none;
     color: white;
     padding: 8px 14px;
@@ -499,7 +491,7 @@ main {
 }
 
 .edit-btn {
-    background-color: var(--secondary-color); /* Dorado Suave */
+    background-color: var(--secondary-color);
 }
 
 .delete-btn:hover,
@@ -509,7 +501,6 @@ main {
     box-shadow: 0 4px 8px var(--hover-shadow);
 }
 
-/* Estilos del Footer */
 footer {
     background-color: var(--card-background);
     color: var(--light-text-color);
@@ -526,7 +517,6 @@ footer:hover {
     box-shadow: 0 -4px 12px var(--hover-shadow);
 }
 
-/* Estilos de Modales */
 .modal {
     display: none; 
     position: fixed; 
@@ -536,7 +526,7 @@ footer:hover {
     width: 100%; 
     height: 100%; 
     overflow: auto; 
-    background-color: var(--modal-bg); /* Fondo de Modal */
+    background-color: var(--modal-bg);
     transition: background-color var(--transition-speed);
 }
 
@@ -573,7 +563,7 @@ footer:hover {
 
 .close:hover,
 .close:focus {
-    color: #E64A19; /* Rojo Intenso */
+    color: #E64A19;
 }
 
 .modal-content h2 {
@@ -631,13 +621,11 @@ footer:hover {
     box-shadow: 0 4px 12px var(--hover-shadow);
 }
 
-/* Animación de Entrada para Modales */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-50px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Responsividad Mejorada */
 @media (max-width: 1200px) {
     .charts {
         flex-direction: row;
@@ -654,16 +642,15 @@ footer:hover {
         height: 200px;
     }
 
-    /* Ajustes para los gráficos extendidos */
     .extended-stacked-chart {
-        height: 500px; /* Reducido para pantallas medianas */
-        max-width: 350px; /* Hacerlo más delgado en pantallas medianas */
+        height: 500px;
+        max-width: 350px;
     }
 
     .extended-thermometer-chart {
         width: 100%;
         max-width: 100%;
-        height: 250px; /* Ajusta según prefieras */
+        height: 250px;
     }
 }
 
@@ -688,6 +675,8 @@ footer:hover {
         width: 100%;
     }
 
+    #export-btn,
+    #import-btn,
     #reset-btn {
         width: 100%;
         justify-content: center;
@@ -716,14 +705,14 @@ footer:hover {
     }
 
     .extended-stacked-chart {
-        height: 400px; /* Ajustado para pantallas pequeñas */
-        max-width: 100%; /* Hacerlo más delgado en pantallas pequeñas */
+        height: 400px;
+        max-width: 100%;
     }
 
     .extended-thermometer-chart {
         width: 100%;
         max-width: 100%;
-        height: 200px; /* Ajusta según prefieras */
+        height: 200px;
     }
 
     .summary-cards {
@@ -772,6 +761,8 @@ footer:hover {
         font-size: 0.9em;
     }
 
+    #export-btn,
+    #import-btn,
     #reset-btn {
         font-size: 0.9em;
         padding: 8px 16px;
