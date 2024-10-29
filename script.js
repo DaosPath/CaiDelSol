@@ -17,6 +17,7 @@ const currencySelector = document.getElementById('currency-selector');
 const exportBtn = document.getElementById('export-btn');
 const importBtn = document.getElementById('import-btn');
 const importFileInput = document.getElementById('import-file');
+const notificationContainer = document.getElementById('notification-container');
 
 const editCategoryModal = document.getElementById('edit-category-modal');
 const closeCategoryModal = document.getElementById('close-category-modal');
@@ -70,6 +71,43 @@ let incomesChart;
 let stackedChart;
 let thermometerChart;
 
+// Side Menu Elements
+const menuToggle = document.getElementById('menu-toggle');
+const sideMenu = document.getElementById('side-menu');
+const closeMenu = document.getElementById('close-menu');
+const currencySelectorMenu = document.getElementById('currency-selector-menu');
+const exportBtnMenu = document.getElementById('export-btn-menu');
+const importBtnMenu = document.getElementById('import-btn-menu');
+const resetBtnMenu = document.getElementById('reset-btn-menu');
+
+function showNotification(type, message) {
+    const notification = document.createElement('div');
+    notification.classList.add('notification', type);
+    
+    const messageSpan = document.createElement('span');
+    messageSpan.classList.add('message');
+    messageSpan.textContent = message;
+    
+    const closeBtn = document.createElement('button');
+    closeBtn.classList.add('close-btn');
+    closeBtn.innerHTML = '&times;';
+    
+    closeBtn.addEventListener('click', () => {
+        notificationContainer.removeChild(notification);
+    });
+    
+    notification.appendChild(messageSpan);
+    notification.appendChild(closeBtn);
+    notificationContainer.appendChild(notification);
+    
+    // Automatically remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notificationContainer.removeChild(notification);
+        }
+    }, 5000);
+}
+
 function loadData() {
     const storedIncomes = localStorage.getItem('incomes');
     const storedExpenses = localStorage.getItem('expenses');
@@ -80,6 +118,7 @@ function loadData() {
     categories = storedCategories ? JSON.parse(storedCategories) : defaultCategories;
     selectedCurrency = storedCurrency ? storedCurrency : 'USD';
     currencySelector.value = selectedCurrency;
+    currencySelectorMenu.value = selectedCurrency;
 }
 
 function saveData() {
@@ -184,21 +223,25 @@ function populateEditExpenseCategorySelect() {
 }
 
 function deleteItem(e) {
-    const type = e.target.closest('button').getAttribute('data-type');
-    const index = e.target.closest('button').getAttribute('data-index');
+    const button = e.target.closest('button');
+    const type = button.getAttribute('data-type');
+    const index = button.getAttribute('data-index');
 
     if (type === 'income') {
         incomes.splice(index, 1);
+        showNotification('success', 'Ingreso eliminado correctamente.');
     } else if (type === 'expense') {
         expenses.splice(index, 1);
+        showNotification('success', 'Gasto eliminado correctamente.');
     } else if (type === 'category') {
         const categoryName = categories[index].name;
         const hasExpenses = expenses.some(expense => expense.category === categoryName);
         if (hasExpenses) {
-            alert('No puedes eliminar una categoría que tiene gastos asociados.');
+            showNotification('error', 'No puedes eliminar una categoría que tiene gastos asociados.');
             return;
         }
         categories.splice(index, 1);
+        showNotification('success', 'Categoría eliminada correctamente.');
     }
 
     saveData();
@@ -208,8 +251,9 @@ function deleteItem(e) {
 }
 
 function openEditModal(e) {
-    const type = e.target.closest('button').getAttribute('data-type');
-    const index = e.target.closest('button').getAttribute('data-index');
+    const button = e.target.closest('button');
+    const type = button.getAttribute('data-type');
+    const index = button.getAttribute('data-index');
 
     if (type === 'category') {
         const category = categories[index];
@@ -273,8 +317,9 @@ editCategoryForm.addEventListener('submit', (e) => {
         renderLists();
         updateCharts();
         editCategoryModal.style.display = 'none';
+        showNotification('success', 'Categoría actualizada correctamente.');
     } else {
-        alert('Por favor, ingresa un nombre válido y asegúrate de que la categoría no exista ya.');
+        showNotification('error', 'Por favor, ingresa un nombre válido y asegúrate de que la categoría no exista ya.');
     }
 });
 
@@ -296,8 +341,9 @@ editExpenseForm.addEventListener('submit', (e) => {
         updateSummary();
         updateCharts();
         editExpenseModal.style.display = 'none';
+        showNotification('success', 'Gasto actualizado correctamente.');
     } else {
-        alert('Por favor, completa todos los campos con valores válidos.');
+        showNotification('error', 'Por favor, completa todos los campos con valores válidos.');
     }
 });
 
@@ -319,8 +365,9 @@ editIncomeForm.addEventListener('submit', (e) => {
         updateSummary();
         updateCharts();
         editIncomeModal.style.display = 'none';
+        showNotification('success', 'Ingreso actualizado correctamente.');
     } else {
-        alert('Por favor, completa todos los campos con valores válidos.');
+        showNotification('error', 'Por favor, completa todos los campos con valores válidos.');
     }
 });
 
@@ -338,8 +385,9 @@ incomeForm.addEventListener('submit', (e) => {
         updateSummary();
         updateCharts();
         incomeForm.reset();
+        showNotification('success', 'Ingreso agregado correctamente.');
     } else {
-        alert('Por favor, ingresa un nombre válido, monto positivo, selecciona una fecha y un color.');
+        showNotification('error', 'Por favor, ingresa un nombre válido, monto positivo, selecciona una fecha y un color.');
     }
 });
 
@@ -357,8 +405,9 @@ expenseForm.addEventListener('submit', (e) => {
         updateSummary();
         updateCharts();
         expenseForm.reset();
+        showNotification('success', 'Gasto agregado correctamente.');
     } else {
-        alert('Por favor, completa todos los campos con valores válidos.');
+        showNotification('error', 'Por favor, completa todos los campos con valores válidos.');
     }
 });
 
@@ -373,35 +422,81 @@ categoryForm.addEventListener('submit', (e) => {
         renderLists();
         updateCharts();
         categoryForm.reset();
+        showNotification('success', 'Categoría agregada correctamente.');
     } else {
-        alert('Por favor, ingresa un nombre válido y asegúrate de que la categoría no exista ya.');
+        showNotification('error', 'Por favor, ingresa un nombre válido y asegúrate de que la categoría no exista ya.');
     }
 });
 
 resetBtn.addEventListener('click', () => {
-    const confirmReset = confirm('¿Estás seguro de que deseas reiniciar todo? Esto eliminará todos los ingresos, gastos y categorías personalizadas.');
-    if (confirmReset) {
-        incomes = [];
-        expenses = [];
-        categories = [...defaultCategories];
-        selectedCurrency = 'USD';
-        currencySelector.value = selectedCurrency;
-        saveData();
-        renderLists();
-        updateSummary();
-        updateCharts();
+    resetAll();
+});
+
+// Side Menu Event Listeners
+menuToggle.addEventListener('click', () => {
+    sideMenu.classList.add('open');
+});
+
+closeMenu.addEventListener('click', () => {
+    sideMenu.classList.remove('open');
+});
+
+// Close side menu when clicking outside of it
+window.addEventListener('click', (event) => {
+    if (event.target == sideMenu) {
+        sideMenu.classList.remove('open');
     }
 });
 
-currencySelector.addEventListener('change', (e) => {
+// Synchronize Currency Selectors
+function handleCurrencyChange(e, source) {
     selectedCurrency = e.target.value;
+    currencySelector.value = selectedCurrency;
+    currencySelectorMenu.value = selectedCurrency;
     saveData();
     updateSummary();
     renderLists();
     updateCharts();
+}
+
+// Attach event listeners to both currency selectors
+currencySelector.addEventListener('change', (e) => handleCurrencyChange(e, 'header'));
+currencySelectorMenu.addEventListener('change', (e) => handleCurrencyChange(e, 'menu'));
+
+// Handle Export Button from Header
+exportBtn.addEventListener('click', () => {
+    exportBudget();
 });
 
-exportBtn.addEventListener('click', () => {
+// Handle Export Button from Menu
+exportBtnMenu.addEventListener('click', () => {
+    exportBudget();
+    sideMenu.classList.remove('open');
+});
+
+// Handle Import Button from Header
+importBtn.addEventListener('click', () => {
+    importFileInput.click();
+});
+
+// Handle Import Button from Menu
+importBtnMenu.addEventListener('click', () => {
+    importFileInput.click();
+    sideMenu.classList.remove('open');
+});
+
+// Handle Reset Button from Header
+resetBtn.addEventListener('click', () => {
+    resetAll();
+});
+
+// Handle Reset Button from Menu
+resetBtnMenu.addEventListener('click', () => {
+    resetAll();
+    sideMenu.classList.remove('open');
+});
+
+function exportBudget() {
     const exportData = {
         createdAt: new Date().toLocaleString('es-ES'),
         incomes,
@@ -433,12 +528,88 @@ exportBtn.addEventListener('click', () => {
     a.download = 'presupuesto.txt';
     a.click();
     URL.revokeObjectURL(url);
-    alert('Presupuesto exportado correctamente.');
-});
+    showNotification('success', 'Presupuesto exportado correctamente.');
+}
 
-importBtn.addEventListener('click', () => {
-    importFileInput.click();
-});
+function importBudget(content) {
+    if (!content.startsWith('# Exportado por CaiDelSol')) {
+        showNotification('error', 'El archivo no es válido o no proviene de CaiDelSol.');
+        return;
+    }
+
+    const lines = content.split('\n');
+
+    if (lines.length < 2 || !lines[1].startsWith('Fecha de Exportación:')) {
+        showNotification('error', 'El archivo no contiene la fecha de exportación.');
+        return;
+    }
+
+    const exportDate = lines[1].replace('Fecha de Exportación:', '').trim();
+
+    const sections = content.split('## ').slice(1);
+    const newData = {};
+    sections.forEach(section => {
+        const [title, ...lines] = section.split('\n');
+        newData[title.trim()] = lines.filter(line => line.trim() !== '');
+    });
+
+    if (!newData['Ingresos'] || !newData['Gastos'] || !newData['Categorías']) {
+        showNotification('error', 'El archivo no contiene todas las secciones necesarias.');
+        return;
+    }
+
+    const importedIncomes = [];
+    newData['Ingresos'].forEach((line, index) => {
+        if (line.startsWith('- Nombre:')) {
+            const name = line.split(':')[1].trim();
+            const montoLine = newData['Ingresos'][index + 1];
+            const monto = parseFloat(montoLine.split(':')[1].trim());
+            const fechaLine = newData['Ingresos'][index + 2];
+            const fecha = fechaLine.split(':')[1].trim();
+            const colorLine = newData['Ingresos'][index + 3];
+            const color = colorLine.split(':')[1].trim();
+            importedIncomes.push({ name, amount: monto, date: fecha, color });
+        }
+    });
+
+    const importedExpenses = [];
+    newData['Gastos'].forEach((line, index) => {
+        if (line.startsWith('- Nombre:')) {
+            const name = line.split(':')[1].trim();
+            const montoLine = newData['Gastos'][index + 1];
+            const monto = parseFloat(montoLine.split(':')[1].trim());
+            const fechaLine = newData['Gastos'][index + 2];
+            const fecha = fechaLine.split(':')[1].trim();
+            const categoriaLine = newData['Gastos'][index + 3];
+            const categoria = categoriaLine.split(':')[1].trim();
+            importedExpenses.push({ name, amount: monto, date: fecha, category: categoria });
+        }
+    });
+
+    const importedCategories = [];
+    newData['Categorías'].forEach((line, index) => {
+        if (line.startsWith('- Nombre:')) {
+            const name = line.split(':')[1].trim();
+            const colorLine = newData['Categorías'][index + 1];
+            const color = colorLine.split(':')[1].trim();
+            const isDefaultLine = newData['Categorías'][index + 2];
+            const isDefault = isDefaultLine.split(':')[1].trim() === 'true';
+            importedCategories.push({ name, color, isDefault });
+        }
+    });
+
+    incomes = importedIncomes;
+    expenses = importedExpenses;
+    categories = importedCategories;
+    selectedCurrency = 'USD'; // Reset to default or handle currency if needed
+    currencySelector.value = selectedCurrency;
+    currencySelectorMenu.value = selectedCurrency;
+    saveData();
+    renderLists();
+    updateSummary();
+    updateCharts();
+    showNotification('success', 'Presupuesto importado correctamente.');
+}
 
 importFileInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
@@ -446,83 +617,27 @@ importFileInput.addEventListener('change', (e) => {
     const reader = new FileReader();
     reader.onload = function(event) {
         const content = event.target.result;
-        if (!content.startsWith('# Exportado por CaiDelSol')) {
-            alert('El archivo no es válido o no proviene de CaiDelSol.');
-            return;
-        }
+        importBudget(content);
+    };
+    reader.readAsText(file);
+});
 
-        const lines = content.split('\n');
-
-        if (lines.length < 2 || !lines[1].startsWith('Fecha de Exportación:')) {
-            alert('El archivo no contiene la fecha de exportación.');
-            return;
-        }
-
-        const exportDate = lines[1].replace('Fecha de Exportación:', '').trim();
-
-        const sections = content.split('## ').slice(1);
-        const newData = {};
-        sections.forEach(section => {
-            const [title, ...lines] = section.split('\n');
-            newData[title.trim()] = lines.filter(line => line.trim() !== '');
-        });
-
-        if (!newData['Ingresos'] || !newData['Gastos'] || !newData['Categorías']) {
-            alert('El archivo no contiene todas las secciones necesarias.');
-            return;
-        }
-
-        const importedIncomes = [];
-        newData['Ingresos'].forEach((line, index) => {
-            if (line.startsWith('- Nombre:')) {
-                const name = line.split(':')[1].trim();
-                const montoLine = newData['Ingresos'][index + 1];
-                const monto = parseFloat(montoLine.split(':')[1].trim());
-                const fechaLine = newData['Ingresos'][index + 2];
-                const fecha = fechaLine.split(':')[1].trim();
-                const colorLine = newData['Ingresos'][index + 3];
-                const color = colorLine.split(':')[1].trim();
-                importedIncomes.push({ name, amount: monto, date: fecha, color });
-            }
-        });
-
-        const importedExpenses = [];
-        newData['Gastos'].forEach((line, index) => {
-            if (line.startsWith('- Nombre:')) {
-                const name = line.split(':')[1].trim();
-                const montoLine = newData['Gastos'][index + 1];
-                const monto = parseFloat(montoLine.split(':')[1].trim());
-                const fechaLine = newData['Gastos'][index + 2];
-                const fecha = fechaLine.split(':')[1].trim();
-                const categoriaLine = newData['Gastos'][index + 3];
-                const categoria = categoriaLine.split(':')[1].trim();
-                importedExpenses.push({ name, amount: monto, date: fecha, category: categoria });
-            }
-        });
-
-        const importedCategories = [];
-        newData['Categorías'].forEach((line, index) => {
-            if (line.startsWith('- Nombre:')) {
-                const name = line.split(':')[1].trim();
-                const colorLine = newData['Categorías'][index + 1];
-                const color = colorLine.split(':')[1].trim();
-                const isDefaultLine = newData['Categorías'][index + 2];
-                const isDefault = isDefaultLine.split(':')[1].trim() === 'true';
-                importedCategories.push({ name, color, isDefault });
-            }
-        });
-
-        incomes = importedIncomes;
-        expenses = importedExpenses;
-        categories = importedCategories;
+function resetAll() {
+    const confirmReset = confirm('¿Estás seguro de que deseas reiniciar todo? Esto eliminará todos los ingresos, gastos y categorías personalizadas.');
+    if (confirmReset) {
+        incomes = [];
+        expenses = [];
+        categories = [...defaultCategories];
+        selectedCurrency = 'USD';
+        currencySelector.value = selectedCurrency;
+        currencySelectorMenu.value = selectedCurrency;
         saveData();
         renderLists();
         updateSummary();
         updateCharts();
-        alert('Presupuesto importado correctamente.');
-    };
-    reader.readAsText(file);
-});
+        showNotification('success', 'Todo ha sido reiniciado correctamente.');
+    }
+}
 
 function initCharts() {
     expensesChart = new Chart(expensesChartCtx, {

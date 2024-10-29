@@ -1,22 +1,26 @@
 :root {
-    --primary-color: #2E4053;
-    --secondary-color: #F39C12;
-    --background-color: #ECF0F1;
+    --primary-color: #FF7F50; /* Coral */
+    --secondary-color: #FF6347; /* Tomato */
+    --background-color: #FFF8E1; /* Light Warm Background */
     --card-background: #FFFFFF;
-    --text-color: #2C3E50;
-    --light-text-color: #7F8C8D;
-    --border-color: #BDC3C7;
+    --text-color: #8B4513; /* SaddleBrown */
+    --light-text-color: #D2691E; /* Chocolate */
+    --border-color: #FFDAB9; /* PeachPuff */
     --shadow-color: rgba(0, 0, 0, 0.1);
     --hover-shadow: rgba(0, 0, 0, 0.2);
     --font-family: 'Roboto', sans-serif;
     --header-font: 'Great Vibes', cursive;
     --transition-speed: 0.3s;
     --modal-bg: rgba(0, 0, 0, 0.5);
-    --gradient-bg: linear-gradient(135deg, #2E4053, #1B2631);
-    --button-hover: #1A5276;
-    --input-focus: #F39C12;
+    --gradient-bg: linear-gradient(135deg, #FF7F50, #FF6347);
+    --button-hover: #FFA500; /* Orange */
+    --input-focus: #FF8C00; /* DarkOrange */
     --chart-font: 'Roboto', sans-serif;
-    --chart-background: #f2f3f4;
+    --chart-background: #FFEBCD; /* BlanchedAlmond */
+    --notification-success: #4CAF50; /* Green */
+    --notification-error: #F44336; /* Red */
+    --notification-info: #2196F3; /* Blue */
+    --notification-warning: #FF9800; /* Orange */
 }
 
 * {
@@ -49,7 +53,7 @@ header {
 }
 
 header:hover {
-    background: linear-gradient(135deg, #1B2631, #2E4053);
+    background: linear-gradient(135deg, #FF6347, #FF7F50);
     box-shadow: 0 6px 16px var(--hover-shadow);
 }
 
@@ -73,7 +77,7 @@ header:hover {
 header h1 {
     font-family: var(--header-font);
     font-size: 2.2em;
-    color: #ECF0F1;
+    color: #FFF8E1;
     font-weight: 700;
     text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
 }
@@ -99,7 +103,7 @@ header h1 {
     background-color: #fff;
     transform: scale(1.05);
     outline: none;
-    box-shadow: 0 0 8px var(--secondary-color);
+    box-shadow: 0 0 8px var(--input-focus);
 }
 
 #export-btn,
@@ -127,13 +131,105 @@ header h1 {
     box-shadow: 0 4px 12px var(--hover-shadow);
 }
 
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: #FFF8E1;
+    font-size: 1.5em;
+    cursor: pointer;
+    transition: color var(--transition-speed);
+}
+
+.menu-toggle:hover {
+    color: #FFA500;
+}
+
+.side-menu {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 250px;
+    height: 100%;
+    background-color: var(--card-background);
+    box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+    padding: 20px;
+    transition: right var(--transition-speed);
+    z-index: 1500;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.side-menu.open {
+    right: 0;
+}
+
+.close-menu {
+    align-self: flex-end;
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+    color: var(--primary-color);
+    transition: color var(--transition-speed);
+}
+
+.close-menu:hover {
+    color: #FFA500;
+}
+
+#currency-selector-menu {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: var(--text-color);
+    font-size: 1em;
+    transition: background-color var(--transition-speed), transform var(--transition-speed), box-shadow var(--transition-speed);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#currency-selector-menu:focus {
+    background-color: #fff;
+    transform: scale(1.05);
+    outline: none;
+    box-shadow: 0 0 8px var(--input-focus);
+}
+
+#export-btn-menu,
+#import-btn-menu,
+#reset-btn-menu {
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color var(--transition-speed), transform var(--transition-speed), box-shadow var(--transition-speed);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+}
+
+#export-btn-menu:hover,
+#import-btn-menu:hover,
+#reset-btn-menu:hover {
+    background-color: var(--button-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--hover-shadow);
+}
+
 main {
     flex: 1;
     padding: 40px 60px;
     display: flex;
     flex-direction: column;
     gap: 40px;
-    background: linear-gradient(135deg, #ECF0F1, #D5D8DC);
+    background: linear-gradient(135deg, #FFF8E1, #FFEBCD);
     transition: padding var(--transition-speed);
 }
 
@@ -157,7 +253,7 @@ main {
 .form:hover {
     transform: translateY(-8px);
     box-shadow: 0 12px 24px var(--hover-shadow);
-    background-color: #FDFEFE;
+    background-color: #FFF5E1;
 }
 
 .form h2 {
@@ -200,7 +296,7 @@ main {
     border: 1px solid var(--border-color);
     border-radius: 10px;
     font-size: 1em;
-    background-color: #F8F9F9;
+    background-color: #FFEFD5; /* PapayaWhip */
     color: var(--text-color);
     transition: border-color var(--transition-speed), background-color var(--transition-speed), transform var(--transition-speed), box-shadow var(--transition-speed);
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
@@ -208,10 +304,10 @@ main {
 
 .form input:focus, 
 .form select:focus {
-    border-color: var(--secondary-color);
+    border-color: var(--input-focus);
     outline: none;
     background-color: #fff;
-    box-shadow: 0 0 8px var(--secondary-color);
+    box-shadow: 0 0 8px var(--input-focus);
 }
 
 .form button {
@@ -229,7 +325,7 @@ main {
 }
 
 .form button:hover {
-    background-color: #F1C40F;
+    background-color: #FFA500; /* Orange */
     transform: translateY(-2px);
     box-shadow: 0 4px 12px var(--hover-shadow);
 }
@@ -245,7 +341,7 @@ main {
 .summary:hover {
     transform: translateY(-8px);
     box-shadow: 0 12px 24px var(--hover-shadow);
-    background-color: #FDFEFE;
+    background-color: #FFF5E1;
 }
 
 .summary h2 {
@@ -268,7 +364,7 @@ main {
 }
 
 .card {
-    background-color: #F8F9F9;
+    background-color: #FFEBCD; /* BlanchedAlmond */
     padding: 25px 30px;
     border-radius: 12px;
     flex: 1 1 200px;
@@ -280,7 +376,7 @@ main {
 .card:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 20px var(--hover-shadow);
-    background-color: #FCF3CF;
+    background-color: #FFDAB9; /* PeachPuff */
 }
 
 .card h3 {
@@ -312,7 +408,7 @@ main {
 .chart-container:hover {
     transform: translateY(-8px);
     box-shadow: 0 12px 24px var(--hover-shadow);
-    background-color: #FDFEFE;
+    background-color: #FFF5E1;
 }
 
 .charts {
@@ -340,7 +436,7 @@ main {
 .chart:hover {
     transform: translateY(-6px);
     box-shadow: 0 10px 30px var(--hover-shadow);
-    background-color: #FCF3CF;
+    background-color: #FFDAB9;
 }
 
 .thermometer-chart {
@@ -360,7 +456,7 @@ main {
 .thermometer-chart:hover {
     transform: translateY(-6px);
     box-shadow: 0 10px 30px var(--hover-shadow);
-    background-color: #FCF3CF;
+    background-color: #FFDAB9;
 }
 
 .full-width {
@@ -409,7 +505,7 @@ main {
 .list:hover {
     transform: translateY(-8px);
     box-shadow: 0 12px 24px var(--hover-shadow);
-    background-color: #FDFEFE;
+    background-color: #FFF5E1;
 }
 
 .list h2 {
@@ -430,7 +526,7 @@ main {
     overflow-y: auto;
     padding-right: 10px;
     scrollbar-width: thin;
-    scrollbar-color: var(--secondary-color) #f1f1f1;
+    scrollbar-color: var(--secondary-color) #FFEBCD;
 }
 
 .list ul::-webkit-scrollbar {
@@ -438,7 +534,7 @@ main {
 }
 
 .list ul::-webkit-scrollbar-track {
-    background: #f1f1f1; 
+    background: #FFEBCD; 
     border-radius: 4px;
 }
 
@@ -448,11 +544,11 @@ main {
 }
 
 .list ul::-webkit-scrollbar-thumb:hover {
-    background: #E67E22;
+    background: #FFA500;
 }
 
 .list li {
-    background: #F8F9F9;
+    background: #FFEFD5;
     margin: 10px 0;
     padding: 12px 18px;
     border-radius: 10px;
@@ -464,7 +560,7 @@ main {
 }
 
 .list li:hover {
-    background-color: #FCF3CF;
+    background-color: #FFDAB9;
     transform: scale(1.02);
 }
 
@@ -513,7 +609,7 @@ footer {
 }
 
 footer:hover {
-    background-color: #FDFEFE;
+    background-color: #FFF5E1;
     box-shadow: 0 -4px 12px var(--hover-shadow);
 }
 
@@ -547,7 +643,7 @@ footer:hover {
 .modal-content:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 24px var(--hover-shadow);
-    background-color: #FDFEFE;
+    background-color: #FFF5E1;
 }
 
 .close {
@@ -563,7 +659,7 @@ footer:hover {
 
 .close:hover,
 .close:focus {
-    color: #E67E22;
+    color: #FFA500;
 }
 
 .modal-content h2 {
@@ -587,7 +683,7 @@ footer:hover {
     border: 1px solid var(--border-color);
     border-radius: 10px;
     font-size: 1em;
-    background-color: #F8F9F9;
+    background-color: #FFEFD5;
     color: var(--text-color);
     transition: border-color var(--transition-speed), background-color var(--transition-speed), transform var(--transition-speed), box-shadow var(--transition-speed);
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
@@ -595,10 +691,10 @@ footer:hover {
 
 .modal-content input:focus,
 .modal-content select:focus {
-    border-color: var(--secondary-color);
+    border-color: var(--input-focus);
     outline: none;
     background-color: #fff;
-    box-shadow: 0 0 8px var(--secondary-color);
+    box-shadow: 0 0 8px var(--input-focus);
 }
 
 .modal-content button {
@@ -616,9 +712,83 @@ footer:hover {
 }
 
 .modal-content button:hover {
-    background-color: #F1C40F;
+    background-color: #FFA500;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px var(--hover-shadow);
+}
+
+.notification-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 300px;
+    z-index: 2000;
+}
+
+.notification {
+    background-color: #fff;
+    color: #333;
+    padding: 15px 20px;
+    margin-bottom: 15px;
+    border-left: 5px solid;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    animation: slideIn 0.5s ease-out, fadeOut 0.5s ease-in 4.5s forwards;
+}
+
+.notification.success {
+    border-color: var(--notification-success);
+}
+
+.notification.error {
+    border-color: var(--notification-error);
+}
+
+.notification.info {
+    border-color: var(--notification-info);
+}
+
+.notification.warning {
+    border-color: var(--notification-warning);
+}
+
+.notification .message {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.notification .close-btn {
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.notification .close-btn:hover {
+    color: #666;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
 }
 
 @keyframes fadeIn {
@@ -656,30 +826,27 @@ footer:hover {
 
 @media (max-width: 768px) {
     header {
-        flex-direction: column;
-        gap: 10px;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
         padding: 15px 20px;
     }
 
-    .logo h1 {
-        font-size: 1.8em;
-    }
-
     .header-controls {
-        flex-direction: column;
-        gap: 10px;
-        width: 100%;
+        display: none;
     }
 
-    #currency-selector {
-        width: 100%;
+    .menu-toggle {
+        display: block;
     }
 
-    #export-btn,
-    #import-btn,
-    #reset-btn {
+    .side-menu {
+        width: 250px;
+    }
+
+    .side-menu select,
+    .side-menu button {
         width: 100%;
-        justify-content: center;
     }
 
     main {
@@ -763,7 +930,10 @@ footer:hover {
 
     #export-btn,
     #import-btn,
-    #reset-btn {
+    #reset-btn,
+    #export-btn-menu,
+    #import-btn-menu,
+    #reset-btn-menu {
         font-size: 0.9em;
         padding: 8px 16px;
     }
