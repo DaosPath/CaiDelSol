@@ -450,49 +450,68 @@ importFileInput.addEventListener('change', (e) => {
             alert('El archivo no es válido o no proviene de CaiDelSol.');
             return;
         }
+
+        const lines = content.split('\n');
+
+        if (lines.length < 2 || !lines[1].startsWith('Fecha de Exportación:')) {
+            alert('El archivo no contiene la fecha de exportación.');
+            return;
+        }
+
+        const exportDate = lines[1].replace('Fecha de Exportación:', '').trim();
+
         const sections = content.split('## ').slice(1);
         const newData = {};
         sections.forEach(section => {
             const [title, ...lines] = section.split('\n');
             newData[title.trim()] = lines.filter(line => line.trim() !== '');
         });
-        if (!newData['Fecha de Exportación:']) {
-            alert('El archivo no contiene la fecha de exportación.');
-            return;
-        }
+
         if (!newData['Ingresos'] || !newData['Gastos'] || !newData['Categorías']) {
             alert('El archivo no contiene todas las secciones necesarias.');
             return;
         }
+
         const importedIncomes = [];
-        newData['Ingresos'].forEach(line => {
+        newData['Ingresos'].forEach((line, index) => {
             if (line.startsWith('- Nombre:')) {
                 const name = line.split(':')[1].trim();
-                const monto = parseFloat(newData['Ingresos'][newData['Ingresos'].indexOf(line) + 1].split(':')[1].trim());
-                const fecha = newData['Ingresos'][newData['Ingresos'].indexOf(line) + 2].split(':')[1].trim();
-                const color = newData['Ingresos'][newData['Ingresos'].indexOf(line) + 3].split(':')[1].trim();
+                const montoLine = newData['Ingresos'][index + 1];
+                const monto = parseFloat(montoLine.split(':')[1].trim());
+                const fechaLine = newData['Ingresos'][index + 2];
+                const fecha = fechaLine.split(':')[1].trim();
+                const colorLine = newData['Ingresos'][index + 3];
+                const color = colorLine.split(':')[1].trim();
                 importedIncomes.push({ name, amount: monto, date: fecha, color });
             }
         });
+
         const importedExpenses = [];
-        newData['Gastos'].forEach(line => {
+        newData['Gastos'].forEach((line, index) => {
             if (line.startsWith('- Nombre:')) {
                 const name = line.split(':')[1].trim();
-                const monto = parseFloat(newData['Gastos'][newData['Gastos'].indexOf(line) + 1].split(':')[1].trim());
-                const fecha = newData['Gastos'][newData['Gastos'].indexOf(line) + 2].split(':')[1].trim();
-                const categoria = newData['Gastos'][newData['Gastos'].indexOf(line) + 3].split(':')[1].trim();
+                const montoLine = newData['Gastos'][index + 1];
+                const monto = parseFloat(montoLine.split(':')[1].trim());
+                const fechaLine = newData['Gastos'][index + 2];
+                const fecha = fechaLine.split(':')[1].trim();
+                const categoriaLine = newData['Gastos'][index + 3];
+                const categoria = categoriaLine.split(':')[1].trim();
                 importedExpenses.push({ name, amount: monto, date: fecha, category: categoria });
             }
         });
+
         const importedCategories = [];
-        newData['Categorías'].forEach(line => {
+        newData['Categorías'].forEach((line, index) => {
             if (line.startsWith('- Nombre:')) {
                 const name = line.split(':')[1].trim();
-                const color = newData['Categorías'][newData['Categorías'].indexOf(line) + 1].split(':')[1].trim();
-                const isDefault = newData['Categorías'][newData['Categorías'].indexOf(line) + 2].split(':')[1].trim() === 'true';
+                const colorLine = newData['Categorías'][index + 1];
+                const color = colorLine.split(':')[1].trim();
+                const isDefaultLine = newData['Categorías'][index + 2];
+                const isDefault = isDefaultLine.split(':')[1].trim() === 'true';
                 importedCategories.push({ name, color, isDefault });
             }
         });
+
         incomes = importedIncomes;
         expenses = importedExpenses;
         categories = importedCategories;
@@ -504,6 +523,7 @@ importFileInput.addEventListener('change', (e) => {
     };
     reader.readAsText(file);
 });
+
 function initCharts() {
     expensesChart = new Chart(expensesChartCtx, {
         type: 'pie',
